@@ -11,6 +11,7 @@ resource "azurerm_network_interface" "Win10NIC" {
   name                = "interface0"
   location            = "${azurerm_resource_group.labRG.location}"
   resource_group_name = "${azurerm_resource_group.labRG.name}"
+network_security_group_id     = "${azurerm_network_security_group.sg_client.id}"
  
   ip_configuration {
     name                          = "Win10Client"
