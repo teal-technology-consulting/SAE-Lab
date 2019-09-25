@@ -21,7 +21,7 @@ resource "azurerm_virtual_machine" "DC01" {
   location            = "${azurerm_resource_group.labRG.location}"
   resource_group_name  = "${azurerm_resource_group.labRG.name}"
   network_interface_ids = ["${azurerm_network_interface.internal_DC01.id}"] 
-  vm_size                       = "Standard_F2"
+  vm_size                       = "${var.vm_size}"
   delete_os_disk_on_termination = true
 
   storage_image_reference {
