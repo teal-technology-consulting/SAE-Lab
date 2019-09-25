@@ -41,25 +41,23 @@ function New-LogLine
             'Error'       { $TypeNum = 3 }
         }
     
-        if (-not $Script:LogFilePath)
-        {
+        if (-not $Script:LogFilePath) {
             Write-Error -Message 'Variable $LogFilePath not defined in scope $Script:'
             exit 1
         }
+        
         $Script:LogFilePath = Resolve-Path -Path $Script:LogFilePath
-        if (-not (Test-Path -Path $Script:LogFilePath -PathType Leaf))
-        {
+        if (-not (Test-Path -Path $Script:LogFilePath -PathType Leaf)) {
             New-Item -Path $Script:LogFilePath -ItemType File -ErrorAction Stop | Out-Null
         }
+        
         $LogFile = Get-Item -Path $Script:LogFilePath
-        if ($LogFile.Length -ge $LogMaxSize)
-        {
+        if ($LogFile.Length -ge $LogMaxSize) {
             $ArchiveLogFiles = Get-ChildItem -Path $LogFile.Directory -Filter "$($LogFile.BaseName)*.log" | Where-Object {$_.Name -match "$($LogFile.BaseName)-\d{8}-\d{6}\.log"} | Sort-Object -Property BaseName
-            if ($ArchiveLogFiles.Count -gt $LogMaxHistory)
-            {
+            if ($ArchiveLogFiles.Count -gt $LogMaxHistory) {
                 $ArchiveLogFiles | Select-Object -Skip ($ArchiveLogFiles.Count - $LogMaxHistory) | Remove-Item
             }
-
+            
             $NewFileName = "{0}-{1:yyyyMMdd-HHmmss}{2}" -f $LogFile.BaseName, $LogFile.LastWriteTime, $LogFile.Extension
             $LogFile | Rename-Item -NewName $NewFileName
             New-Item -Path $Script:LogFilePath -ItemType File -ErrorAction Stop | Out-Null
