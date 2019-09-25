@@ -5,7 +5,7 @@ resource "azurerm_resource_group" "labRG" {
 
 variable "location" {
   description = "The region."
-  default     = "centralus"
+  default     = "westeurope"
 }
 variable "client_address_space" {
   description = "The address space"
@@ -35,11 +35,11 @@ variable "red_subnet_prefix" {
 
 variable "vm_size" {
   description = "Specifies size"
-  default     = "Standard_A0"
+  default     = "Standard_B2"
 }
 variable "win10_size" {
   description = "Specifies size"
-  default     = "Standard_A0"
+  default     = "Standard_B2"
 }
 
 #variable "subnet_id" {}
