@@ -35,11 +35,11 @@ variable "red_subnet_prefix" {
 
 variable "vm_size" {
   description = "Specifies size"
-  default     = "Standard_B2"
+  default     = "Standard_B2s"
 }
 variable "win10_size" {
   description = "Specifies size"
-  default     = "Standard_B2"
+  default     = "Standard_B2s"
 }
 
 #variable "subnet_id" {}
