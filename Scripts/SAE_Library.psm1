@@ -24,8 +24,10 @@ function New-LogLine
         [string]$File = '',
 
         [Parameter(Mandatory = $false)]
-        [ValidateNotNull()]
-        [int]$LogMaxSize = 2.5MB
+        [int]$LogMaxSize = 2.5MB,
+
+        [Parameter(Mandatory = $false)]
+        [int]$LogMaxHistory = 1
     )
     
     #Requires -Version 2.0
@@ -52,9 +54,9 @@ function New-LogLine
         if ($LogFile.Length -ge $LogMaxSize)
         {
             $ArchiveLogFiles = Get-ChildItem -Path $LogFile.Directory -Filter "$($LogFile.BaseName)*.log" | Where-Object {$_.Name -match "$($LogFile.BaseName)-\d{8}-\d{6}\.log"} | Sort-Object -Property BaseName
-            if ($ArchiveLogFiles.Count -gt 1)
+            if ($ArchiveLogFiles.Count -gt $LogMaxHistory)
             {
-                $ArchiveLogFiles | Select-Object -Skip ($ArchiveLogFiles.Count - 1) | Remove-Item
+                $ArchiveLogFiles | Select-Object -Skip ($ArchiveLogFiles.Count - $LogMaxHistory) | Remove-Item
             }
 
             $NewFileName = "{0}-{1:yyyyMMdd-HHmmss}{2}" -f $LogFile.BaseName, $LogFile.LastWriteTime, $LogFile.Extension
