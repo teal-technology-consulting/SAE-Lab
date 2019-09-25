@@ -44,6 +44,7 @@ function New-LogLine
         if (-not $Script:LogFilePath)
         {
             Write-Error -Message 'Variable $LogFilePath not defined in scope $Script:'
+            exit 1
         }
         $Script:LogFilePath = Resolve-Path -Path $Script:LogFilePath
         if (-not (Test-Path -Path $Script:LogFilePath -PathType Leaf))
