@@ -3,12 +3,6 @@ function New-LogLine
     Param(
         [Parameter(
             Mandatory = $true,
-            Position = 0)]
-        [ValidateScript({Test-Path -Path $_ -IsValid})]
-        [string]$FilePath,
-
-        [Parameter(
-            Mandatory = $true,
             ValueFromPipeline = $true)]
         [ValidateNotNullOrEmpty()]
         [string]$LogText,
@@ -45,12 +39,16 @@ function New-LogLine
             'Error'       { $TypeNum = 3 }
         }
     
-        $FilePath = Resolve-Path -Path $FilePath
-        if (-not (Test-Path -Path $FilePath -PathType Leaf))
+        if (-not $Script:LogFilePath)
         {
-            New-Item -Path $FilePath -ItemType File -ErrorAction Stop | Out-Null
+            Write-Error -Message 'Variable $LogFilePath not defined in scope $Script:'
         }
-        $LogFile = Get-Item -Path $FilePath
+        $Script:LogFilePath = Resolve-Path -Path $Script:LogFilePath
+        if (-not (Test-Path -Path $Script:LogFilePath -PathType Leaf))
+        {
+            New-Item -Path $Script:LogFilePath -ItemType File -ErrorAction Stop | Out-Null
+        }
+        $LogFile = Get-Item -Path $Script:LogFilePath
         if ($LogFile.Length -ge $MaxLogFileSize)
         {
             $ArchiveLogFiles = Get-ChildItem -Path $LogFile.Directory -Filter "$($LogFile.BaseName)*.log" | Where-Object {$_.Name -match "$($LogFile.BaseName)-\d{8}-\d{6}\.log"} | Sort-Object -Property BaseName
@@ -61,7 +59,7 @@ function New-LogLine
 
             $NewFileName = "{0}-{1:yyyyMMdd-HHmmss}{2}" -f $LogFile.BaseName, $LogFile.LastWriteTime, $LogFile.Extension
             $LogFile | Rename-Item -NewName $NewFileName
-            New-Item -Path $FilePath -ItemType File -ErrorAction Stop | Out-Null
+            New-Item -Path $Script:LogFilePath -ItemType File -ErrorAction Stop | Out-Null
         }
     }
     
@@ -70,7 +68,7 @@ function New-LogLine
         $now = Get-Date
         $Bias = ($now.ToUniversalTime() - $now).TotalMinutes
         [string]$Line = "<![LOG[{0}]LOG]!><time=`"{1:HH:mm:ss.fff}{2}`" date=`"{1:MM-dd-yyyy}`" component=`"{3}`" context=`"`" type=`"{4}`" thread=`"{5}`" file=`"{6}`">" -f $LogText, $now, $Bias, $Component, $TypeNum, $Thread, $File
-        $Line | Out-File -FilePath $FilePath -Encoding utf8 -Append -ErrorAction Stop
+        $Line | Out-File -FilePath $Script:LogFilePath -Encoding utf8 -Append -ErrorAction Stop
     }
     
     End
