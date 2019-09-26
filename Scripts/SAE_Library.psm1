@@ -1,4 +1,4 @@
-function New-LogLine
+function Write-Log
 {
     Param(
         [Parameter(
@@ -57,7 +57,7 @@ function New-LogLine
             if ($ArchiveLogFiles.Count -gt $LogMaxHistory) {
                 $ArchiveLogFiles | Select-Object -Skip ($ArchiveLogFiles.Count - $LogMaxHistory) | Remove-Item
             }
-            
+
             $NewFileName = "{0}-{1:yyyyMMdd-HHmmss}{2}" -f $LogFile.BaseName, $LogFile.LastWriteTime, $LogFile.Extension
             $LogFile | Rename-Item -NewName $NewFileName
             New-Item -Path $Script:LogFilePath -ItemType File -ErrorAction Stop | Out-Null
@@ -75,4 +75,67 @@ function New-LogLine
     End
     {
     }
+}
+
+function Install-MSFile
+{
+    <#
+    .SYNOPSIS
+    Installs a MSI install package
+    .DESCRIPTION
+    Installs an installation package in MSI format
+    .PARAMETER MsiPath
+    Path to a MSI installation package
+    .PARAMETER MsiLogPath
+    Path to a log file
+    #>
+
+    Param(
+        [Parameter(Mandatory=$true,Position=0)]
+        [string]$MsiPath,
+
+        [Parameter(Mandatory=$false)]
+        [string]$MsiLogPath
+    )
+
+    $ReturnCode = 0
+
+    if (-not (Test-Path $MsiPath)) {
+        Write-Error "Could not find file `'$MsiPath`'."
+        return 1
+    }
+    $MsiPath = Resolve-Path -Path $MsiPath
+    
+    if (-not $MsiLogPath) {
+        $MsiLogPath = Join-Path $env:TEMP -ChildPath "$((Get-Item $MsiPath).BaseName).log"
+    }
+
+    Write-Log -LogText "Found MSI file `'$MsiPath`'."
+    Write-Log -LogText "Using MSI log file `'$MsiLogPath`'."
+
+    $Cmd = @{
+        FilePath = Join-Path ([Environment]::SystemDirectory) -ChildPath 'msiexec.exe'
+        ArgumentList = "/package `"$MSIPath`" /l `"$LogFile`" /quiet /norestart"
+    }
+    Write-Log -LogText 'Executing command line'
+    Write-Log -LogText "$($Cmd.FilePath) $($Cmd.ArgumentList)"
+    $Return = Start-Process @Cmd -Wait -PassThru
+    if ($Return) {
+        $ReturnCode = $Return.ExitCode
+    }
+    else {
+        $ReturnCode = 2
+    }
+
+    if ($ReturnCode -eq 0) {
+        Write-Log -LogText "Successfully installed file `'$MsiPath`' (Exit code $ReturnCode)."
+    }
+    elseif ($ReturnCode -eq 3010) {
+        Write-Log -LogText "Restart required to complete the installation (Exit code $ReturnCode)."
+    }
+    else {
+        Write-Log -LogText "Error occured while installing file `'$MsiPath`' (Exit code $ReturnCode)."
+    }
+
+    return  $ReturnCode
 }
