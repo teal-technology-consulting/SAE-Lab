@@ -7,14 +7,14 @@ function Get-SAENetworkAdapterInterfaceID{
         [ValidateNotNullOrEmpty()]
         [string]$SystemconfigurationIP
     )
-    New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Get Interface index: ... "
+    Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Get Interface index: ... "
     [string]$interfaceindex = $null
     $interfaceindex = (Get-NetIPConfiguration | Where-Object {$_.IPv4Address.ipaddress -eq $systemconfigurationIP}).interfaceindex
     if (!($interfaceindex)){
-        New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Error" -LogText "Network interface not found."  
+        Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Error" -LogText "Network interface not found."  
         exit 99
     }
-    New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Interface Index: $($interfaceindex)"
+    Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Interface Index: $($interfaceindex)"
     return $interfaceindex
 }
 function Rename-SAENetworkAdapter {
@@ -34,13 +34,13 @@ function Rename-SAENetworkAdapter {
     $interfaceindex = Get-SAENetworkAdapterInterfaceID -SystemconfigurationIP $SystemconfigurationIP
     
 
-    try {New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Rename NetworkInterface: ... "
+    try {Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Rename NetworkInterface: ... "
         Get-NetAdapter -InterfaceIndex $interfaceindex | Rename-NetAdapter -newname $SystemconfigurationNetworkName
-        New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Interface Renamed"
+        Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Interface Renamed"
     }
     
     catch {
-        New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "error" -LogText"Failed to rename Network Interface: $error[0]"  
+        Write-Log -Component $MyInvocation.MyCommand -ValidateSet "error" -LogText"Failed to rename Network Interface: $error[0]"  
     }
 }
 
@@ -62,12 +62,12 @@ function Set-SAEDNSClient {
     $interfaceIndex = Get-SAENetworkAdapterInterfaceID -SystemconfigurationIP $SystemconfigurationIP
 
     try {
-        New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Configure DNS Servers: ... "
+        Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Configure DNS Servers: ... "
         Set-DnsClientServerAddress -InterfaceIndex $interfaceindex -ServerAddresses $systemconfigurationDNS    
     }
     
     catch {
-        New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Error" -LogText "Failed to Configure DNS: $error[0]"  
+        Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Error" -LogText "Failed to Configure DNS: $error[0]"  
     }
 }
 
@@ -85,19 +85,19 @@ function get-saeinstalledwindowsfeatures {
     if ($osversion -match "server") {
         $installstate = $null
         try {
-            New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Get Installation state for windows feature."
+            Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Get Installation state for windows feature."
             $installstate = (get-windowsfeature -name $SystemconfigurationWindowsfeature).installstate
         }
         catch {
-            New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Error" -LogText "There was a problem getting the installed windows features."
+            Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Error" -LogText "There was a problem getting the installed windows features."
         }
         
         if ($installstate -eq "Installed"){
-            New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Windowsfeature installed"
+            Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Windowsfeature installed"
             return $true
         } 
         else {
-            New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Windowsfeature not installed."
+            Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Windowsfeature not installed."
             return $false
         }
     }
@@ -127,12 +127,12 @@ function install-saewindowsfeatures {
             $installstate = get-saeinstalledwindowsfeatures -SystemconfigurationWindowsfeature $windowsfeature
             if (!($installstate)){continue}
             try {
-                New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Installing: .... $windowsfeature"
+                Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Installing: .... $windowsfeature"
                 $InstallStatus = Install-WindowsFeature -name $windowsfeature -IncludeManagementTools
-                New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Feature Installed: $windowsfeature ExitCode: $($InstallStatus.ExitCode) RestartRequired: $($InstallStatus.RestartNeeded)"
+                Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Feature Installed: $windowsfeature ExitCode: $($InstallStatus.ExitCode) RestartRequired: $($InstallStatus.RestartNeeded)"
                 }
             catch {
-                New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Error" -LogText "There was a problem to install the windows feature $windowsfeature please check windows logs!"    
+                Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Error" -LogText "There was a problem to install the windows feature $windowsfeature please check windows logs!"    
                 exit 99
                 }
         }
@@ -147,11 +147,11 @@ function install-saewindowsfeatures {
             foreach ($InstallCapability in $InstallCapabilities){
                 try {
                     $InstallCapability = $InstallCapability -replace ".*(\:\s)",""
-                    New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Installing: .... $InstallCapability"
+                    Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Installing: .... $InstallCapability"
                     DISM.exe /Online /add-capability /CapabilityName:$InstallCapability
                     }
                 catch {
-                    New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "There was a problem to install the windows feature $InstallCapability please check windows logs!"    
+                    Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "There was a problem to install the windows feature $InstallCapability please check windows logs!"    
                     exit 99
                     }    
                 }
@@ -178,12 +178,12 @@ function set-SAEConfigureNewDisks{
         [int]$SystemconfigurationDiskVolname
     )
     try {
-        New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Start configure disk: ..."
+        Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Start configure disk: ..."
         get-disk | Where-Object PartitionStyle -eq 'RAW' | Where-Object {($_.size/1gb -eq $SystemconfigurationDiskVolsize )} | Initialize-Disk -PartitionStyle MBR -PassThru | New-Partition -DriveLetter $SystemconfigurationDiskDriveletter -UseMaximumSize | Format-Volume -NewFileSystemLabel $SystemconfigurationDiskVolname -FileSystem NTFS -Confirm:$false
-        New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Disk configured."
+        Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "Disk configured."
     }
     catch {
-        New-LogLine -Component $MyInvocation.MyCommand -ValidateSet "Information" -LogText "There was a problem configuring the disk .... : $error[0]"
+        Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Error" -LogText "There was a problem configuring the disk: $error[0]"
     }
     
 }
@@ -217,5 +217,5 @@ function Add-SAEJoinDomain {
             Add-Computer -DomainName $SystemconfigurationJoindomainDomain -OUPath $SystemconfigurationJoindomainOUPath -Credential $AdminCredentials
             }
         }
-        catch {Write-Log -LogFile $logfile -Classification "INFO" -Message "Unable to determin Domain"}
+        catch {Write-Log -Component $MyInvocation.MyCommand -ValidateSet "Error" -LogText "Unable to join domain: $error[0]"}
 }
