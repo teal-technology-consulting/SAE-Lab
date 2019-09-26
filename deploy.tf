@@ -10,9 +10,9 @@ resource "azurerm_virtual_machine_extension" "MYDEPLOY" {
 
   settings = <<SETTINGS
   {
-  "fileUris": ["https://gist.githubusercontent.com/kevit/0cdea7324667ea2f87527f9663498795/raw/47a3e6018126d911a3cce5581606eaeafd88ddec/lab.ps1"],
+  "fileUris": ["https://gist.githubusercontent.com/kevit/0cdea7324667ea2f87527f9663498795/raw/"],
   "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File ./lab.ps1",
-  "timestamp" : "13"
+  "timestamp" : "14"
   }
 SETTINGS
 
