@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<configuration>
+
+<system name="VM-SAE-RED-DC1" Role="ROOTDC" IP="10.2.3.101" AddressFamily="IPv4" NetworkName="mgmt">
+    <WindowsFeatures>AD-Domain-Services;DNS</WindowsFeatures>
+    <ADConfig CreateDnsDelegation="False" DomainMode="WinThreshold" ForestMode="WinThreshold" DatabasePath="E:\Windows\NTDS" DomainName="red.saeproject.global" DomainNetbiosName="red" InstallDns="True" LogPath="E:\Windows\NTDS" SysvolPath="E:\Windows\SYSVOL" NoRebootOnCompletion="True" SafeModeAdministratorPassword="lJS7Le19LlUNipupmzzp"></ADConfig>
+</system>
+<system name="VM-SAE-RED-DC2" Role="MEMBERDC" IP="10.2.2.101" DNS="10.2.3.101,10.2.2.101,127.0.0.1" AddressFamily="IPv4" NetworkName="mgmt">
+    <WindowsFeatures>AD-Domain-Services;DNS</WindowsFeatures>
+    <ADConfig DatabasePath="E:\Windows\NTDS" DomainName="red.saeproject.global" InstallDns="True" LogPath="E:\Windows\NTDS" SysvolPath="E:\Windows\SYSVOL" SafeModeAdministratorPassword="lJS7Le19LlUNipupmzzp" AdminUser="red\redadmin" AdminPasswort="UXahp80Bq0QixObxCpVz"></ADConfig>
+</system>
+<system name="VM-SAE-GOL-DC1" Role="ROOTDC" IP="10.2.4.101" AddressFamily="IPv4" NetworkName="mgmt">
+    <WindowsFeatures>AD-Domain-Services;DNS</WindowsFeatures>
+    <ADConfig CreateDnsDelegation="False" DomainMode="WinThreshold" ForestMode="WinThreshold" DatabasePath="E:\Windows\NTDS" DomainName="gold.saeproject.global" DomainNetbiosName="gold" InstallDns="True" LogPath="E:\Windows\NTDS" SysvolPath="E:\Windows\SYSVOL" NoRebootOnCompletion="True" SafeModeAdministratorPassword="PU147Ly7nw1UbzIoIdCe"></ADConfig>
+</system>
+<system name="VM-SAE-GOL-DC2" Role="MEMBERDC" IP="10.2.4.102" DNS="10.2.4.101,10.2.4.102,127.0.0.1" AddressFamily="IPv4" NetworkName="mgmt">
+    <WindowsFeatures>AD-Domain-Services;DNS</WindowsFeatures>
+    <ADConfig DatabasePath="E:\Windows\NTDS" DomainName="gold.saeproject.global" InstallDns="True" LogPath="E:\Windows\NTDS" SysvolPath="E:\Windows\SYSVOL" SafeModeAdministratorPassword="PU147Ly7nw1UbzIoIdCe" AdminUser="gold\goldadmin" AdminPasswort="axygEGcXvs6GOUG7mJS1"></ADConfig>
+</system>
+<system name="testdc01" Role="ROOTDC" IP="10.0.0.10" AddressFamily="IPv4" NetworkName="mgmt">
+    <WindowsFeatures>AD-Domain-Services;DNS</WindowsFeatures>
+    <ADConfig CreateDnsDelegation="False" DomainMode="WinThreshold" ForestMode="WinThreshold" DatabasePath="C:\Windows\NTDS" DomainName="saeproject.test.t-mgmt.global" DomainNetbiosName="saeproject" InstallDns="True" LogPath="C:\Windows\NTDS" SysvolPath="C:\Windows\SYSVOL" NoRebootOnCompletion="True" SafeModeAdministratorPassword="Start123"></ADConfig>
+</system>
+<system name="testdc02" Role="MEMBERDC" IP="10.0.0.20" DNS="10.0.0.10,10.0.0.20,127.0.0.1" AddressFamily="IPv4" NetworkName="mgmt">
+    <WindowsFeatures>AD-Domain-Services;DNS</WindowsFeatures>
+    <ADConfig DatabasePath="C:\Windows\NTDS" DomainName="saeproject.test.t-mgmt.global" InstallDns="True" LogPath="C:\Windows\NTDS" SysvolPath="C:\Windows\SYSVOL" SafeModeAdministratorPassword="Start123" AdminUser="saeproject\administrator" AdminPasswort="Start123"></ADConfig>
+</system>
+<system name="testmember01" Role="scomgw" IP="10.0.0.30" DNS="10.0.0.10,10.0.0.20" AddressFamily="IPv4" NetworkName="mgmt">
+    <Disks>
+    <Disk volname="DATA" volsize="32" driveletter="E"></Disk>
+    </Disks>
+    <joindomain domain="saeproject.test.t-mgmt.global" user="joindomain" password="Start123" OUPath="Ou=Servers,OU=SAEProject,DC=saeproject,DC=test,DC=t-mgmt,DC=global"></joindomain>
+</system>
+
+<system name="VM-SAE-RED-GW1" Role="scomgw" IP="10.2.2.5" DNS="10.2.2.101,10.2.3.101" AddressFamily="IPv4" NetworkName="mgmt">
+    <Disks>
+    <Disk volname="DATA" volsize="32" driveletter="E"></Disk>
+    </Disks>
+    <joindomain domain="red.saeproject.global" user="joindomain" password="DtxogRcR9jzExIzxoZcm" OUPath="Ou=Servers,OU=SAEProject,DC=red,DC=saeproject,DC=global"></joindomain>
+</system>
+
+<system name="VM-SAE-RED-OM1" Role="scomgw" IP="10.2.3.8" DNS="10.2.3.101,10.2.2.101" AddressFamily="IPv4" NetworkName="mgmt">
+    <Disks>
+    <Disk volname="DATA" volsize="32" driveletter="E"></Disk>
+    </Disks>
+    <joindomain domain="red.saeproject.global" user="joindomain" password="DtxogRcR9jzExIzxoZcm" OUPath="Ou=Servers,OU=SAEProject,DC=red,DC=saeproject,DC=global"></joindomain>
+</system>
+
+<system name="VM-SAE-RED-PA1" Role="scomgw" IP="10.2.3.6" DNS="10.2.3.101,10.2.2.101" AddressFamily="IPv4" NetworkName="mgmt">
+    <Disks>
+    <Disk volname="DATA" volsize="32" driveletter="E"></Disk>
+    </Disks>
+    <joindomain domain="red.saeproject.global" user="joindomain" password="DtxogRcR9jzExIzxoZcm" OUPath="Ou=Servers,OU=SAEProject,DC=red,DC=saeproject,DC=global"></joindomain>
+</system>
+
+<system name="VM-SAE-RED-PK1" Role="scomgw" IP="10.2.3.5" DNS="10.2.3.101,10.2.2.101" AddressFamily="IPv4" NetworkName="mgmt">
+    <Disks>
+    <Disk volname="DATA" volsize="32" driveletter="E"></Disk>
+    </Disks>
+    <joindomain domain="red.saeproject.global" user="joindomain" password="DtxogRcR9jzExIzxoZcm" OUPath="Ou=Servers,OU=SAEProject,DC=red,DC=saeproject,DC=global"></joindomain>
+</system>
+
+<system name="VM-SAE-RED-SQ1" Role="scomgw" IP="10.2.3.7" DNS="10.2.3.101,10.2.2.101" AddressFamily="IPv4" NetworkName="mgmt">
+    <Disks>
+    <Disk volname="DATA" volsize="32" driveletter="E"></Disk>
+    </Disks>
+    <joindomain domain="red.saeproject.global" user="joindomain" password="DtxogRcR9jzExIzxoZcm" OUPath="Ou=Servers,OU=SAEProject,DC=red,DC=saeproject,DC=global"></joindomain>
+</system>
+
+<system name="VM-SAE-RED-WE1" Role="scomgw" IP="10.2.2.6" DNS="10.2.2.101,10.2.3.101" AddressFamily="IPv4" NetworkName="mgmt">
+    <Disks>
+    <Disk volname="DATA" volsize="32" driveletter="E"></Disk>
+    </Disks>
+    <joindomain domain="red.saeproject.global" user="joindomain" password="DtxogRcR9jzExIzxoZcm" OUPath="Ou=Servers,OU=SAEProject,DC=red,DC=saeproject,DC=global"></joindomain>
+</system>
+
+<system name="VM-SAE-GOL-GW1" Role="scomgw" IP="10.2.4.7" DNS="10.2.4.101,10.2.4.102" AddressFamily="IPv4" NetworkName="mgmt">
+    <Disks>
+    <Disk volname="DATA" volsize="32" driveletter="E"></Disk>
+    </Disks>
+    <joindomain domain="gold.saeproject.global" user="joindomain" password="DtxogRcR9jzExIzxoZcm" OUPath="Ou=Servers,OU=SAEProject,DC=gold,DC=saeproject,DC=global"></joindomain>
+</system>
+
+<system name="VM-SAE-PAW-WS2" Role="scomgw" IP="10.2.1.202" DNS="10.2.3.101,10.2.2.101" AddressFamily="IPv4" NetworkName="mgmt">
+    <Disks>
+    <Disk volname="DATA" volsize="32" driveletter="E"></Disk>
+    </Disks>
+    <WindowsFeatures>Rsat</WindowsFeatures>
+    <joindomain domain="red.saeproject.global" user="joindomain" password="DtxogRcR9jzExIzxoZcm" OUPath="Ou=paw,OU=SAEProject,DC=red,DC=saeproject,DC=global"></joindomain>
+</system>
+
+</configuration>
