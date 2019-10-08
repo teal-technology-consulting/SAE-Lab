@@ -1,29 +1,4 @@
-resource "azurerm_virtual_network" "red" {
-  name                = "RED"
-  location            = "${azurerm_resource_group.labRG.location}"
-  address_space       = ["${var.red_address_space}"]
-  resource_group_name = "${azurerm_resource_group.labRG.name}"
-}
 
-resource "azurerm_subnet" "red_subnet" {
-  name                 = "RED_subnet"
-  virtual_network_name = "${azurerm_virtual_network.red.name}"
-  resource_group_name  = "${azurerm_resource_group.labRG.name}"
-  address_prefix       = "${var.red_subnet_prefix}"
-}
-resource "azurerm_virtual_network" "gold" {
-  name                = "GOLD"
-  location            = "${azurerm_resource_group.labRG.location}"
-  address_space       = ["${var.gold_address_space}"]
-  resource_group_name = "${azurerm_resource_group.labRG.name}"
-}
-
-resource "azurerm_subnet" "gold_subnet" {
-  name                 = "GOLD_subnet"
-  virtual_network_name = "${azurerm_virtual_network.gold.name}"
-  resource_group_name  = "${azurerm_resource_group.labRG.name}"
-  address_prefix       = "${var.gold_subnet_prefix}"
-}
 resource "azurerm_virtual_network" "client" {
   name                = "CLIENT"
   location            = "${azurerm_resource_group.labRG.location}"

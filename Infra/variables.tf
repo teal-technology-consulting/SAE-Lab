@@ -11,26 +11,10 @@ variable "client_address_space" {
   description = "The address space"
   default     = "10.0.1.0/24"
 }
-variable "gold_address_space" {
-  description = "The address space"
-  default     = "10.0.3.0/24"
-}
-variable "red_address_space" {
-  description = "The address space"
-  default     = "10.0.2.0/24"
-}
+
 variable "client_subnet_prefix" {
   description = "The address prefix subnet."
   default     = "10.0.1.0/24"
-}
-
-variable "gold_subnet_prefix" {
-  description = "The address prefix subnet."
-  default     = "10.0.3.0/24"
-}
-variable "red_subnet_prefix" {
-  description = "The address prefix subnet."
-  default     = "10.0.2.0/24"
 }
 
 variable "vm_size" {
