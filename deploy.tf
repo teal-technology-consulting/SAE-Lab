@@ -4,7 +4,7 @@ module "parent" {
 
 resource "azurerm_virtual_machine_extension" "MYDEPLOY" {
   name                 = "MYDEPLOY"
-  location            = "${module.parent.location}"
+  location             = "${module.parent.location}"
   resource_group_name  = "${module.parent.resource_group_name}"
   virtual_machine_name = "${module.parent.win10client}"
   publisher            = "Microsoft.Compute"

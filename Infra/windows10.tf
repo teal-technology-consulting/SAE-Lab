@@ -24,9 +24,9 @@ network_security_group_id     = "${azurerm_network_security_group.sg_client.id}"
 }
 resource "azurerm_virtual_machine" "win10client" {
     name                           = "Win10"
-    location            = "${azurerm_resource_group.labRG.location}"
+    location                       = "${azurerm_resource_group.labRG.location}"
     resource_group_name            = "${azurerm_resource_group.labRG.name}"
-    network_interface_ids  = ["${azurerm_network_interface.Win10NIC.id}"]
+    network_interface_ids          = ["${azurerm_network_interface.Win10NIC.id}"]
     vm_size                        = "${var.win10_size}"
     delete_os_disk_on_termination  = "True"
 
