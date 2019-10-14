@@ -13,9 +13,13 @@ resource "azurerm_virtual_machine_extension" "MYDEPLOY" {
 
   settings = <<SETTINGS
  {
-  "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted \" $(Get-Date) This is a test.\" | Out-File -FilePath \"C:\\Users\\Public\\TestFile.txt\" -Append",
-  "timestamp" : "14"
-  }
+  
+  "commandToExecute": "Mkdir C:\\AppX; exit 0",
+  "timestamp" : "15"
+  
+}
 SETTINGS
 
 }
+
+ # "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -NoProfile -NonInteractive -Command \"& {\"$(Get-Date) This is a test.\" | Out-File -FilePath C:\\Users\\Public\\TestFile.txt -Encoding utf8 -Append}; exit 0",
